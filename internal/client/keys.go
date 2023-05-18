@@ -31,10 +31,6 @@ type KeyDeviceCreateCapabilities struct {
 	Tags          []string `json:"tags,omitempty"`
 }
 
-func (c *Client) CreateKey(ctx context.Context, caps KeyCapabilities) (keySecret string, keyMeta *Key, _ error) {
-	return c.CreateKeyWithExpiry(ctx, caps, 0)
-}
-
 func (c *Client) CreateKeyWithExpiry(ctx context.Context, caps KeyCapabilities, expiry time.Duration) (keySecret string, keyMeta *Key, _ error) {
 	expirySeconds := int64(expiry.Seconds())
 	if expirySeconds < 0 {

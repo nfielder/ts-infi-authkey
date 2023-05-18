@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/nfielder/ts-infi-authkey/internal/client"
 	"golang.org/x/oauth2/clientcredentials"
@@ -16,7 +17,10 @@ type CmdOpts struct {
 	Ephemeral bool
 	Preauth   bool
 	Tags      string
+	Expiry    time.Duration
 }
+
+const maxDuration time.Duration = 90 * 24 * time.Hour
 
 func Run(opts CmdOpts) {
 	clientID := os.Getenv("TS_API_CLIENT_ID")
@@ -27,6 +31,10 @@ func Run(opts CmdOpts) {
 
 	if opts.Tags == "" {
 		log.Fatal("at least one tag must be specified")
+	}
+
+	if opts.Expiry > maxDuration {
+		log.Fatal("max expiry time must be less than 90 days")
 	}
 
 	baseURL := os.Getenv("TS_BASE_URL")
@@ -58,7 +66,7 @@ func Run(opts CmdOpts) {
 		},
 	}
 
-	authkey, _, err := tsClient.CreateKey(ctx, caps)
+	authkey, _, err := tsClient.CreateKeyWithExpiry(ctx, caps, opts.Expiry)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
