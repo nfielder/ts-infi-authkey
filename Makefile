@@ -14,7 +14,7 @@ run:
 
 clean:
 	go clean
-	rm ./bin/${BINARY_NAME}*
+	rm -r ./bin
 
 fmt:
 	go fmt ./...
