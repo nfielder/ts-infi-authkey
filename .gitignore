@@ -1,3 +1,5 @@
 /ts-infi-authkey
 bin/
 .env
+
+dist/

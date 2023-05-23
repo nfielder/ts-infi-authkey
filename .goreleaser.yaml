@@ -1,0 +1,65 @@
+project_name: ts-infi-authkey
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/ts-infi-authkey/main.go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+archives:
+  - format: tar.gz
+    files:
+      - LICENSE.txt
+      - README.md
+    rlcp: true
+
+dockers:
+  - image_templates:
+    - 'ghcr.io/nfielder/{{ .ProjectName }}:{{ .Tag }}'
+    - 'ghcr.io/nfielder/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}'
+    - 'ghcr.io/nfielder/{{ .ProjectName }}:latest'
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+
+checksum:
+  name_template: checksum.txt
+
+snapshot:
+  name_template: '{{ incpatch .Version }}-next'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Others
+      order: 999
+
+release:
+  github:
+    owner: nfielder
+    name: '{{ .ProjectName }}'
+  mode: replace
+
+report_sizes: true
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
