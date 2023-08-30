@@ -1,6 +1,6 @@
 module github.com/nfielder/ts-infi-authkey
 
-go 1.20
+go 1.21
 
 require golang.org/x/oauth2 v0.11.0
 
